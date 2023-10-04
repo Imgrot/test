@@ -52,9 +52,7 @@ class EmployeeController extends Controller
     {
         $rules=[
             'name' => 'required|string|min:1|max:100',
-            'email' => 'required|email|max:80',
-            'phone' => 'required|max:15',
-            'department_id' => 'required|numeric'
+            'hide' => 'required'
         ];
         $validator = Validator::make($request->input(),$rules);
         if($validator->fails()){
@@ -92,5 +90,16 @@ class EmployeeController extends Controller
         ->join('departments','departments.id','=','employees.department_id')
         ->get();
         return response()->json($employees);
+    }
+
+    public function toggleVisibility(Employee $employee)
+    {
+    $employee->hide = $employee->hide === 'n' ? 's' : 'n';
+    $employee->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Employee visibility toggled successfully',
+    ], 200);
     }
 }
